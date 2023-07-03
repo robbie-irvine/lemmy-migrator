@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { LemmyHttp } from 'lemmy-js-client';
-import { source_instance, destination_instance } from '../login-data.mjs';
+import { source_instance, destination_instance } from './login-data.js';
 
 let baseUrl = source_instance.url;
 let client = new LemmyHttp(baseUrl);
