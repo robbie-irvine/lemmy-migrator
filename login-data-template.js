@@ -5,6 +5,7 @@
 let source_instance = {
     username_or_email: "",
     password: "",
+    totp_2fa_token: "", // Leave this blank if you don't use 2fa
     url: "https://"
 }
 
@@ -12,6 +13,7 @@ let source_instance = {
 let destination_instance = {
     username_or_email: "",
     password: "",
+    totp_2fa_token: "", // Leave this blank if you don't use 2fa
     url: "https://"
 }
 
