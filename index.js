@@ -18,7 +18,10 @@ async function connect() {
     
     let login = await client.login(loginForm).catch((e) => { console.error(e); return false; });
     
-    console.log(login.jwt);
+    //console.log(login.jwt);
+    let siteData = await client.getSite({auth: login.jwt}).catch((e) => { console.error(e); return false; });
+    let userData = siteData.my_user;
+    //console.log(siteData.my_user);
 }
 
 connect()
