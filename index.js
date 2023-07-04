@@ -51,7 +51,9 @@ async function connect() {
     console.log(fetchCommunityName(i.community));
   }
 
-  
+  let destUnameFull = destInstance.username_or_email + "@" + (new URL(destUrl).hostname);
+  let doSubscribeP = prompt("Subscribe to instances on " + destUnameFull + "? (Y/n): ");
+  let doSubscribe = doSubscribeP === "" || doSubscribeP[0].toLowerCase() === "y"; // y = True, "" = True, other values = false
 }
 
 connect();
