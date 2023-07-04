@@ -28,7 +28,7 @@ async function lemmyLogin(client, username, password, url) {
 }
 
 // Returns the name of the community in the format of community@instance, e.g. "asklemmy@lemmy.ml"
-function fetchCommunityName(cmnt) {
+function fetchFullName(cmnt) {
   let cName = cmnt.name; // community name
   let cURL = new URL(cmnt.actor_id); // url of community; domain is extracted from this
   let cInst = cURL.hostname; // domain name of instance
@@ -55,7 +55,7 @@ async function connect() {
   //lists communities source user is subscribed to
   console.log("--" + userData.local_user_view.person.name + "'s subscribed communities on " + srcUrl + "--");
   for (const i of userData.follows) {
-    console.log(fetchCommunityName(i.community));
+    console.log(fetchFullName(i.community));
   }
 
   // ask the destination user to subscribe to source user's instances
@@ -83,6 +83,16 @@ async function connect() {
 
   console.log(susForm)
   susForm.auth = destLogin.jwt;
+
+  //gets blocked communities from source
+  for (const i of userData.community_blocks) {
+    console.log(fetchFullName(i.community));
+  }
+
+  //gets blocked users from source
+  for (const i of userData.person_blocks) {
+    console.log(fetchFullName(i.target));
+  }
 }
 
 connect();
