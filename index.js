@@ -13,7 +13,7 @@ let destClient = new LemmyHttp(destUrl);
 
 // logs into the given lemmy client using the given username and password, prompting for 2fa
 async function lemmyLogin(client, username, password, url) {
-  console.log("Login for " + username + "@" + (new URL(url)).hostname);
+  console.log("Logging in " + username + "@" + (new URL(url)).hostname);
 
   // constructs login form
   let twofa = prompt("Enter 2FA key (leave blank if 2FA not used): ")
@@ -29,9 +29,9 @@ async function lemmyLogin(client, username, password, url) {
 
 // Returns the name of the community in the format of community@instance, e.g. "asklemmy@lemmy.ml"
 function fetchCommunityName(cmnt) {
-  let cName = cmnt.name;
-  let cURL = new URL(cmnt.actor_id);
-  let cInst = cURL.hostname;
+  let cName = cmnt.name; // community name
+  let cURL = new URL(cmnt.actor_id); // url of community; domain is extracted from this
+  let cInst = cURL.hostname; // domain name of instance
 
   return cName + "@" + cInst;
 }
