@@ -38,11 +38,15 @@ function fetchCommunityName(cmnt) {
 
 // Main asynchronous function
 async function connect() {
-  let srcLogin = await lemmyLogin(srcClient, srcInstance.username_or_email, srcInstance.password, srcUrl)
-  .catch((e) => { console.error(e); return false; });
-
-  let destLogin = await lemmyLogin(destClient, destInstance.username_or_email, destInstance.password, destUrl)
-  .catch((e) => { console.error(e); return false; });
+  // login to source and destination instances
+  let srcLogin; let destLogin;
+  try {
+    srcLogin = await lemmyLogin(srcClient, srcInstance.username_or_email, srcInstance.password, srcUrl);
+    destLogin = await lemmyLogin(destClient, destInstance.username_or_email, destInstance.password, destUrl);
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
   
   //gathers source user's data to be copied over to the destination user
   let siteData = await srcClient.getSite({auth: srcLogin.jwt}).catch((e) => { console.error(e); return false; });
@@ -54,6 +58,7 @@ async function connect() {
     console.log(fetchCommunityName(i.community));
   }
 
+  // ask the destination user to subscribe to source user's instances
   let destUnameFull = destInstance.username_or_email + "@" + (new URL(destUrl).hostname);
   let doSubscribeP = prompt("Subscribe to instances on " + destUnameFull + "? (Y/n): ");
   let doSubscribe = doSubscribeP === "" || doSubscribeP[0].toLowerCase() === "y"; // y = True, "" = True, other values = false
