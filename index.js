@@ -8,6 +8,9 @@ let prompt = ps();
 let srcUrl = srcInstance.url;
 let srcClient = new LemmyHttp(srcUrl);
 
+let destUrl = destInstance.url;
+let destClient = new LemmyHttp(destUrl);
+
 // logs into the given lemmy client using the given username and password, prompting for 2fa
 async function lemmyLogin(client, username, password, url) {
   // 2FA prompt (adds url if passed)
@@ -51,7 +54,7 @@ async function connect() {
     console.log(fetchCommunityName(i.community));
   }
 
-
+  
 }
 
 connect();
