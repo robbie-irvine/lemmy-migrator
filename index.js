@@ -13,13 +13,10 @@ let destClient = new LemmyHttp(destUrl);
 
 // logs into the given lemmy client using the given username and password, prompting for 2fa
 async function lemmyLogin(client, username, password, url) {
-  // 2FA prompt (adds url if passed)
-  let tfaPrompt = "Enter 2FA key"
-  if (url != undefined) tfaPrompt += " for " + (new URL(url)).hostname;
-  tfaPrompt += " (leave blank if 2FA not used): ";
-  
+  console.log("Login for " + username + "@" + (new URL(url)).hostname);
+
   // constructs login form
-  let twofa = prompt(tfaPrompt)
+  let twofa = prompt("Enter 2FA key (leave blank if 2FA not used): ")
   let loginForm = {
     username_or_email: username,
     password: password,
