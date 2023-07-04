@@ -27,13 +27,16 @@ async function lemmyLogin(client, username, password, url) {
   return client.login(loginForm);
 }
 
-// Returns the name of the community in the format of community@instance, e.g. "asklemmy@lemmy.ml"
+function makeFullName(prefix, atUrl) {
+  return prefix + "@" + (new URL(atUrl)).hostname;
+}
+
+// Returns the name of the community/user in the format of name@instance, e.g. "asklemmy@lemmy.ml"
 function fetchFullName(cmnt) {
   let cName = cmnt.name; // community name
   let cURL = new URL(cmnt.actor_id); // url of community; domain is extracted from this
-  let cInst = cURL.hostname; // domain name of instance
 
-  return cName + "@" + cInst;
+  return makeFullName(cName, cURL);
 }
 
 // Main asynchronous function
@@ -53,15 +56,17 @@ async function connect() {
   let userData = siteData.my_user;
 
   //lists communities source user is subscribed to
-  console.log("--" + userData.local_user_view.person.name + "'s subscribed communities on " + srcUrl + "--");
+  console.log("\n--" + makeFullName(userData.local_user_view.person.name, srcUrl) + "'s subscribed communities" + "--");
   for (const i of userData.follows) {
     console.log(fetchFullName(i.community));
   }
 
   // ask the destination user to subscribe to source user's instances
-  let destUnameFull = destInstance.username_or_email + "@" + (new URL(destUrl).hostname);
-  let doSubscribeP = prompt("Subscribe to instances on " + destUnameFull + "? (Y/n): ");
+  let destUnameFull = makeFullName(destInstance.username_or_email, destUrl);
+  let doSubscribeP = prompt("\nSubscribe to instances on " + destUnameFull + "? (Y/n): ");
   let doSubscribe = doSubscribeP === "" || doSubscribeP[0].toLowerCase() === "y"; // y = True, "" = True, other values = false
+
+  //TODO: if yes, subscribe to all instances on list if possible 
 
   //gets user settings from source
   let susForm = {
@@ -81,8 +86,11 @@ async function connect() {
     theme: userData.local_user_view.local_user.theme
   }
 
+  //TODO: prompt to import settings
   console.log(susForm)
   susForm.auth = destLogin.jwt;
+
+  //TODO: if yes, import settings
 
   //gets blocked communities from source
   for (const i of userData.community_blocks) {
@@ -93,6 +101,10 @@ async function connect() {
   for (const i of userData.person_blocks) {
     console.log(fetchFullName(i.target));
   }
+
+  //TODO: prompt to block users and communities
+  //TODO: if yes, block
+
 }
 
 connect();
