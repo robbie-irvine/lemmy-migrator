@@ -13,7 +13,7 @@ let destClient = new LemmyHttp(destUrl);
 
 // logs into the given lemmy client using the given username and password, prompting for 2fa
 async function lemmyLogin(client, username, password, url) {
-  console.log("Logging in " + username + "@" + (new URL(url)).hostname);
+  console.log("Logging into " + username + "@" + (new URL(url)).hostname);
 
   // constructs login form
   let twofa = prompt("Enter 2FA key (leave blank if 2FA not used): ")
@@ -40,8 +40,11 @@ function fetchCommunityName(cmnt) {
 async function connect() {
   let srcLogin = await lemmyLogin(srcClient, srcInstance.username_or_email, srcInstance.password, srcUrl)
   .catch((e) => { console.error(e); return false; });
+
+  let destLogin = await lemmyLogin(destClient, destInstance.username_or_email, destInstance.password, destUrl)
+  .catch((e) => { console.error(e); return false; });
   
-  //console.log(login.jwt);
+  //gathers source user's data to be copied over to the destination user
   let siteData = await srcClient.getSite({auth: srcLogin.jwt}).catch((e) => { console.error(e); return false; });
   let userData = siteData.my_user;
 
