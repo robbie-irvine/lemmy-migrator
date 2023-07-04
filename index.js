@@ -1,29 +1,33 @@
 #!/usr/bin/env node
 import { LemmyHttp } from 'lemmy-js-client';
-import { source_instance, destination_instance } from './login-data.js';
+import { srcInstance, destInstance } from './login-data.js';
 import ps from 'prompt-sync';
 
 let prompt = ps();
 
-let baseUrl = source_instance.url;
-let client = new LemmyHttp(baseUrl);
+let srcUrl = srcInstance.url;
+let srcClient = new LemmyHttp(srcUrl);
 
-async function connect() {
+// logs into the given lemmy client using the given username and password, prompting for 2fa
+async function lemmyLogin(client, username, password) {
   let twofa = prompt("Enter 2FA key (leave blank if 2FA not used): ")
   let loginForm = {
-    username_or_email: source_instance.username_or_email,
-    password: source_instance.password,
+    username_or_email: username,
+    password: password,
     totp_2fa_token: twofa
   };
-  
-  let login = await client.login(loginForm).catch((e) => { console.error(e); return false; });
+  return await client.login(loginForm).catch((e) => { console.error(e); return false; });
+}
+
+async function connect() {
+  let srcLogin = await lemmyLogin(srcClient, srcInstance.username_or_email, srcInstance.password);
   
   //console.log(login.jwt);
-  let siteData = await client.getSite({auth: login.jwt}).catch((e) => { console.error(e); return false; });
+  let siteData = await srcClient.getSite({auth: srcLogin.jwt}).catch((e) => { console.error(e); return false; });
   let userData = siteData.my_user;
 
   //lists communities source user is subscribed to
-  console.log("--" + userData.local_user_view.person.name + "'s subscribed communities on " + baseUrl + "--");
+  console.log("--" + userData.local_user_view.person.name + "'s subscribed communities on " + srcUrl + "--");
   for (const i of userData.follows) {
     console.log(fetchCommunityName(i.community));
   }
