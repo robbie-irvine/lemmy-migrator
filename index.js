@@ -21,6 +21,12 @@ async function connect() {
   //console.log(login.jwt);
   let siteData = await client.getSite({auth: login.jwt}).catch((e) => { console.error(e); return false; });
   let userData = siteData.my_user;
+
+  //lists communities source user is subscribed to
+  console.log("--" + userData.local_user_view.person.name + "'s subscribed communities on " + baseUrl + "--");
+  for (const i of userData.follows) {
+    console.log(fetchCommunityName(i.community));
+  }
 }
 
 // Returns the name of the community in the format of community@instance, e.g. "asklemmy@lemmy.ml"
