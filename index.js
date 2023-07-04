@@ -62,6 +62,27 @@ async function connect() {
   let destUnameFull = destInstance.username_or_email + "@" + (new URL(destUrl).hostname);
   let doSubscribeP = prompt("Subscribe to instances on " + destUnameFull + "? (Y/n): ");
   let doSubscribe = doSubscribeP === "" || doSubscribeP[0].toLowerCase() === "y"; // y = True, "" = True, other values = false
+
+  //gets user settings from source
+  let susForm = {
+    bio: userData.local_user_view.person.bio,
+    bot_account: userData.local_user_view.person.bot_account,
+    default_listing_type: userData.local_user_view.local_user.default_listing_type,
+    default_sort_type: userData.local_user_view.local_user.default_sort_type,
+    discussion_languages: userData.discussion_languages,
+    interface_language: userData.local_user_view.local_user.interface_language,
+    send_notifications_to_email: userData.local_user_view.local_user.send_notifications_to_email,
+    show_avatars: userData.local_user_view.local_user.show_avatars,
+    show_bot_accounts: userData.local_user_view.local_user.show_bot_accounts,
+    show_new_post_notifs: userData.local_user_view.local_user.show_new_post_notifs,
+    show_nsfw: userData.local_user_view.local_user.show_nsfw,
+    show_read_posts: userData.local_user_view.local_user.show_read_posts,
+    show_scores: userData.local_user_view.local_user.show_scores,
+    theme: userData.local_user_view.local_user.theme
+  }
+
+  console.log(susForm)
+  susForm.auth = destLogin.jwt;
 }
 
 connect();
