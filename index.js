@@ -39,6 +39,11 @@ function fetchFullName(cmnt) {
   return makeFullName(cName, cURL);
 }
 
+// y = True, "" = True, other values = false
+function yesNoCheck(input) {
+  return input === "" || input[0].toLowerCase() === "y";
+}
+
 // Main asynchronous function
 async function connect() {
   // login to source and destination instances
@@ -63,8 +68,7 @@ async function connect() {
 
   // ask the destination user to subscribe to source user's instances
   let destUnameFull = makeFullName(destInstance.username_or_email, destUrl);
-  let doSubscribeP = prompt("\nSubscribe to instances on " + destUnameFull + "? (Y/n): ");
-  let doSubscribe = doSubscribeP === "" || doSubscribeP[0].toLowerCase() === "y"; // y = True, "" = True, other values = false
+  let doSubscribe = yesNoCheck(prompt("\nSubscribe to instances on " + destUnameFull + "? (Y/n): "));
 
   //TODO: if yes, subscribe to all instances on list if possible 
 
