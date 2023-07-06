@@ -63,8 +63,11 @@ async function connect() {
   //lists communities source user is subscribed to
   let srcUnameFull = makeFullName(userData.local_user_view.person.name, srcUrl)
   console.log("\n--" + srcUnameFull + "'s subscribed communities" + "--");
+  let subbed = [];
   for (const i of userData.follows) {
-    console.log(fetchFullName(i.community));
+    let cName = fetchFullName(i.community);
+    console.log(cName);
+    subbed.push(cName);
   }
 
   // ask the destination user to subscribe to source user's instances
@@ -73,7 +76,20 @@ async function connect() {
 
   // if yes, subscribe to all instances on list if possible
   if (doSubscribe) {
-    
+    for (const i of subbed) {
+      try {
+        // get ID of community
+        let comm = await destClient.getCommunity({name: i});
+        let commId = comm.community_view.community.id;
+
+        // subscribe
+        await destClient.followCommunity({auth: destLogin.jwt, community_id: commId, follow: true});
+        console.log("Subscribing to " + i + "...");
+
+      } catch (e) {
+        console.error("Error while subscribing to " + i + ": " + e);
+      }
+    }
   }
 
   // gets user settings from source
