@@ -61,7 +61,8 @@ async function connect() {
   let userData = siteData.my_user;
 
   //lists communities source user is subscribed to
-  console.log("\n--" + makeFullName(userData.local_user_view.person.name, srcUrl) + "'s subscribed communities" + "--");
+  let srcUnameFull = makeFullName(userData.local_user_view.person.name, srcUrl)
+  console.log("\n--" + srcUnameFull + "'s subscribed communities" + "--");
   for (const i of userData.follows) {
     console.log(fetchFullName(i.community));
   }
@@ -70,9 +71,12 @@ async function connect() {
   let destUnameFull = makeFullName(destInstance.username_or_email, destUrl);
   let doSubscribe = yesNoCheck(prompt("\nSubscribe to instances on " + destUnameFull + "? (Y/n): "));
 
-  //TODO: if yes, subscribe to all instances on list if possible 
+  // if yes, subscribe to all instances on list if possible
+  if (doSubscribe) {
+    
+  }
 
-  //gets user settings from source
+  // gets user settings from source
   let susForm = {
     bio: userData.local_user_view.person.bio,
     bot_account: userData.local_user_view.person.bot_account,
@@ -90,25 +94,25 @@ async function connect() {
     theme: userData.local_user_view.local_user.theme
   }
 
-  //TODO: prompt to import settings
+  // prompt to import settings
+  console.log("\n--" + srcUnameFull + "'s settings" + "--");
   console.log(susForm)
-  susForm.auth = destLogin.jwt;
+  let changeSettings = yesNoCheck(prompt("Apply settings to " + destUnameFull + "? (Y/n): "));
 
-  //TODO: if yes, import settings
-
-  //gets blocked communities from source
-  for (const i of userData.community_blocks) {
-    console.log(fetchFullName(i.community));
+  // if yes, import settings
+  if (changeSettings) {
+    susForm.auth = destLogin.jwt;
   }
 
-  //gets blocked users from source
-  for (const i of userData.person_blocks) {
-    console.log(fetchFullName(i.target));
+  // prompt to block users and communities
+  console.log("\n--" + srcUnameFull + "'s blocks--");
+  console.log("Blocked communities: " + userData.community_blocks.length + ", Blocked users: " + userData.person_blocks.length);
+  let confirmBlock = yesNoCheck(prompt("Block users on " + destUnameFull + "? (Y/n): "));
+
+  // if yes, block
+  if (confirmBlock) {
+
   }
-
-  //TODO: prompt to block users and communities
-  //TODO: if yes, block
-
 }
 
 connect();
