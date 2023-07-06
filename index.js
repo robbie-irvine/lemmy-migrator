@@ -94,7 +94,6 @@ async function connect() {
 
   // gets user settings from source
   let susForm = {
-    bio: userData.local_user_view.person.bio,
     bot_account: userData.local_user_view.person.bot_account,
     default_listing_type: userData.local_user_view.local_user.default_listing_type,
     default_sort_type: userData.local_user_view.local_user.default_sort_type,
@@ -118,6 +117,12 @@ async function connect() {
   // if yes, import settings
   if (changeSettings) {
     susForm.auth = destLogin.jwt;
+    try {
+      await destClient.saveUserSettings(susForm);
+      console.log("User settings applied!")
+    } catch (e) {
+      console.error("Error while applying settings: " + e);
+    }
   }
 
   // prompt to block users and communities
@@ -127,7 +132,41 @@ async function connect() {
 
   // if yes, block
   if (confirmBlock) {
+    // block communities
+    let cBlockCnt = 0;
 
+    for (const i of userData.community_blocks) {
+      try {
+      let cName = fetchFullName(i.community)
+      let comm = await destClient.getCommunity({name: cName});
+      let commId = comm.community_view.community.id;
+
+      await destClient.blockCommunity({auth: destLogin.jwt, community_id: commId, block: true});
+      cBlockCnt++;
+      } catch (e) {
+        console.error("Error while blocking an account: " + e);
+      }
+    }
+
+    console.log("Blocked " + cBlockCnt + "/" + userData.community_blocks.length + " communities");
+
+    // block users
+    let pBlockCnt = 0;
+
+    for (const i of userData.person_blocks) {
+      try {
+      let pName = fetchFullName(i.target);
+      let person = await destClient.getPersonDetails({username: pName});
+      let personId = person.person_view.person.id;
+
+      await destClient.blockPerson({auth: destLogin.jwt, person_id: personId, block: true});
+      pBlockCnt++;
+      } catch (e) {
+        console.error("Error while blocking a user: " + e);
+      }
+    }
+
+    console.log("Blocked " + pBlockCnt + "/" + userData.person_blocks.length + " users");
   }
 }
 
